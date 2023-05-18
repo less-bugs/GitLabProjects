@@ -1,23 +1,28 @@
 package com.ppolivka.gitlabprojects.util;
 
+import com.intellij.diagnostic.ActivityCategory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.ExtensionsArea;
+import com.intellij.openapi.extensions.PluginDescriptor;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.util.messages.MessageBus;
+import kotlinx.coroutines.CoroutineScope;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.picocontainer.ComponentAdapter;
-import org.picocontainer.PicoContainer;
-import org.picocontainer.PicoVerificationException;
-import org.picocontainer.PicoVisitor;
+import org.picocontainer.*;
 
 import java.awt.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -35,6 +40,21 @@ public class DummyApplication implements Application {
 
   public DummyApplication(Object service) {
     this.service = service;
+  }
+
+  @Override
+  public void invokeLaterOnWriteThread(@NotNull Runnable action) {
+
+  }
+
+  @Override
+  public void invokeLaterOnWriteThread(@NotNull Runnable action, @NotNull ModalityState modal) {
+
+  }
+
+  @Override
+  public void invokeLaterOnWriteThread(@NotNull Runnable action, @NotNull ModalityState modal, @NotNull Condition<?> expired) {
+
   }
 
   @Override
@@ -83,7 +103,22 @@ public class DummyApplication implements Application {
   }
 
   @Override
+  public void assertReadAccessNotAllowed() {
+
+  }
+
+  @Override
   public void assertIsDispatchThread() {
+
+  }
+
+  @Override
+  public void assertIsNonDispatchThread() {
+
+  }
+
+  @Override
+  public void assertWriteIntentLockAcquired() {
 
   }
 
@@ -108,17 +143,7 @@ public class DummyApplication implements Application {
   }
 
   @Override
-  public void saveAll(boolean isForce) {
-
-  }
-
-  @Override
   public void saveSettings() {
-
-  }
-
-  @Override
-  public void saveSettings(boolean isForce) {
 
   }
 
@@ -139,6 +164,11 @@ public class DummyApplication implements Application {
 
   @Override
   public boolean isDispatchThread() {
+    return false;
+  }
+
+  @Override
+  public boolean isWriteIntentLockAcquired() {
     return false;
   }
 
@@ -271,6 +301,11 @@ public class DummyApplication implements Application {
     return null;
   }
 
+  @Override
+  public <T> @Nullable T getServiceByClassName(@NotNull String serviceClassName) {
+    return null;
+  }
+
   @NotNull
   @Override
   public AccessToken acquireWriteActionLock(@NotNull Class aClass) {
@@ -288,6 +323,11 @@ public class DummyApplication implements Application {
   }
 
   @Override
+  public CoroutineScope getCoroutineScope() {
+    return null;
+  }
+
+  @Override
   public BaseComponent getComponent(@NotNull String s) {
     return null;
   }
@@ -298,37 +338,37 @@ public class DummyApplication implements Application {
   }
 
   @Override
-  public <T> T getComponent(@NotNull Class<T> aClass, T t) {
-    return null;
-  }
-
-  @Override
   public boolean hasComponent(@NotNull Class aClass) {
     return false;
   }
 
   @NotNull
   @Override
-  public <T> T[] getComponents(@NotNull Class<T> aClass) {
-    return null;
-  }
-
-  @NotNull
-  @Override
   public PicoContainer getPicoContainer() {
     return new PicoContainer() {
-      @Override
-      public Object getComponentInstance(Object o) {
-        return service;
-      }
 
       @Override
-      public Object getComponentInstanceOfType(Class aClass) {
+      public Object getComponent(Object componentKeyOrType) {
         return null;
       }
 
       @Override
-      public List getComponentInstances() {
+      public Object getComponent(Object componentKeyOrType, Type into) {
+        return null;
+      }
+
+      @Override
+      public <T> T getComponent(Class<T> componentType) {
+        return null;
+      }
+
+      @Override
+      public <T> T getComponent(Class<T> componentType, Class<? extends Annotation> binding) {
+        return null;
+      }
+
+      @Override
+      public List<Object> getComponents() {
         return null;
       }
 
@@ -343,7 +383,12 @@ public class DummyApplication implements Application {
       }
 
       @Override
-      public ComponentAdapter getComponentAdapterOfType(Class aClass) {
+      public <T> ComponentAdapter<T> getComponentAdapter(Class<T> componentType, NameBinding componentNameBinding) {
+        return null;
+      }
+
+      @Override
+      public <T> ComponentAdapter<T> getComponentAdapter(Class<T> componentType, Class<? extends Annotation> binding) {
         return null;
       }
 
@@ -353,17 +398,17 @@ public class DummyApplication implements Application {
       }
 
       @Override
-      public List getComponentAdaptersOfType(Class aClass) {
+      public <T> List<ComponentAdapter<T>> getComponentAdapters(Class<T> componentType) {
         return null;
       }
 
       @Override
-      public void verify() throws PicoVerificationException {
-
+      public <T> List<ComponentAdapter<T>> getComponentAdapters(Class<T> componentType, Class<? extends Annotation> binding) {
+        return null;
       }
 
       @Override
-      public List getComponentInstancesOfType(Class aClass) {
+      public <T> List<T> getComponents(Class<T> componentType) {
         return null;
       }
 
@@ -372,21 +417,12 @@ public class DummyApplication implements Application {
 
       }
 
-      @Override
-      public void dispose() {
-
-      }
-
-      @Override
-      public void start() {
-
-      }
-
-      @Override
-      public void stop() {
-
-      }
     };
+  }
+
+  @Override
+  public boolean isInjectionForExtensionSupported() {
+    return false;
   }
 
   @NotNull
@@ -409,6 +445,51 @@ public class DummyApplication implements Application {
   @NotNull
   @Override
   public Condition getDisposed() {
+    return null;
+  }
+
+  @Override
+  public <T> T getService(@NotNull Class<T> serviceClass) {
+    return null;
+  }
+
+  @Override
+  public @NotNull ExtensionsArea getExtensionArea() {
+    return null;
+  }
+
+  @Override
+  public <T> T instantiateClassWithConstructorInjection(@NotNull Class<T> aClass, @NotNull Object key, @NotNull PluginId pluginId) {
+    return null;
+  }
+
+  @Override
+  public @NotNull RuntimeException createError(@NotNull Throwable error, @NotNull PluginId pluginId) {
+    return null;
+  }
+
+  @Override
+  public @NotNull RuntimeException createError(@NotNull @NonNls String message, @NotNull PluginId pluginId) {
+    return null;
+  }
+
+  @Override
+  public @NotNull RuntimeException createError(@NotNull @NonNls String message, @Nullable Throwable error, @NotNull PluginId pluginId, @Nullable Map<String, String> attachments) {
+    return null;
+  }
+
+  @Override
+  public @NotNull <T> Class<T> loadClass(@NotNull String className, @NotNull PluginDescriptor pluginDescriptor) throws ClassNotFoundException {
+    return null;
+  }
+
+  @Override
+  public <T> @NotNull T instantiateClass(@NotNull String className, @NotNull PluginDescriptor pluginDescriptor) {
+    return null;
+  }
+
+  @Override
+  public @NotNull ActivityCategory getActivityCategory(boolean isExtension) {
     return null;
   }
 

@@ -1,17 +1,17 @@
 plugins {
-    id "org.jetbrains.intellij" version "0.2.13"
-    id 'io.franzbecker.gradle-lombok' version '1.14'
+    id "org.jetbrains.intellij" version "1.13.3"
+    id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
 
 intellij {
-    version 'IC-2018.1'
-    updateSinceUntilBuild false
-    plugins 'git4idea'
-    pluginName 'GitLabProjects'
+    version = 'IC-2023.1'
+//    updateSinceUntilBuild false
+    plugins = ['vcs-git']
+    pluginName = 'GitLabProjects'
 }
 
 lombok {
-    version = '1.18.2'
+    version = '1.18.22'
     sha256 = ""
 }
 
@@ -20,6 +20,8 @@ repositories {
 }
 
 dependencies {
-    compile group: 'commons-io', name: 'commons-io', version: '2.4'
-    compile group: 'org.gitlab', name: 'java-gitlab-api', version: '4.0.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.7'
+    implementation group: 'org.gitlab', name: 'java-gitlab-api', version: '4.0.0'
+
+    testImplementation("org.picocontainer:picocontainer:2.15")
 }
