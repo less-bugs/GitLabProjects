@@ -17,7 +17,7 @@ import com.ppolivka.gitlabprojects.configuration.SettingsState;
 import git4idea.GitUtil;
 import git4idea.commands.GitCommand;
 import git4idea.commands.GitSimpleHandler;
-import git4idea.config.GitVcsApplicationSettings;
+import git4idea.config.GitExecutableManager;
 import git4idea.config.GitVersion;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
@@ -142,11 +142,11 @@ public class GitLabUtil {
     }
 
     public static boolean testGitExecutable(final Project project) {
-        final GitVcsApplicationSettings settings = GitVcsApplicationSettings.getInstance();
-        final String executable = settings.getPathToGit();
+        GitExecutableManager manager = GitExecutableManager.getInstance();
+        final String executable = manager.getPathToGit();
         final GitVersion version;
         try {
-            version = GitVersion.identifyVersion(executable);
+            version =  manager.identifyVersion(executable);
         } catch (Exception e) {
             showErrorDialog(project, "Cannot find git executable.", "Cannot Find Git");
             return false;
