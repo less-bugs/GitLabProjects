@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>com.ppolivka.gitlabprojects</id>
     <name>GitLab Projects</name>
-    <version>2.2.1</version>
-    <vendor email="polivka.pavel@gmail.com" url="https://www.ppolivka.com">Pavel Polivka</vendor>
+    <version>2.2.2</version>
+    <vendor email="gao.wei.strive@gmail.com" url="https://www.ppolivka.com">gao.wei.strive</vendor>
 
     <description><![CDATA[
         <h2>GitLab Projects Plugin</h2>
@@ -24,7 +24,7 @@
     ]]>
     </change-notes>
 
-    <idea-version since-build="181"/>
+    <idea-version since-build="232" until-build="232.*"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.vcs</depends>
@@ -59,7 +59,7 @@
         <action id="Gitlab.Share" class="com.ppolivka.gitlabprojects.share.GitLabShareAction">
             <add-to-group group-id="Vcs.Import"/>
         </action>
-        <group id="GitLabGroup" text="Git _Lab" popup="true" icon="/icons/gitLabSmall.png">
+        <group id="GitLabGroup" text="Git_Lab" popup="true" icon="/icons/gitLabSmall.png">
             <action id="Gitlab.Create.Merge.Request" class="com.ppolivka.gitlabprojects.merge.request.GitLabMergeRequestAction"/>
             <action id="Gitlab.Create.Merge.Request.List" class="com.ppolivka.gitlabprojects.merge.list.GitLabMergeRequestListAction"/>
 
