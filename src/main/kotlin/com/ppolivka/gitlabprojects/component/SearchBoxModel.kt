@@ -115,7 +115,7 @@ class SearchBoxModel(private val comboBox: JComboBox<*>, searchableUsers: Search
     }
 
     override fun getSelectedItem(): Any {
-        return selectedUser!!
+        return selectedUser?:""
     }
 
     override fun getSize(): Int {
