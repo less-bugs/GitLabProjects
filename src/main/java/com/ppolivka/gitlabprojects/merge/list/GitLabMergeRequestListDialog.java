@@ -45,7 +45,7 @@ public class GitLabMergeRequestListDialog extends DialogWrapper {
         setOKButtonText("Code Review");
         setHorizontalStretch(2);
 
-        List<GitlabMergeRequest> mergeRequests = mergeRequestListWorker.getMergeRequests();
+        List<GitlabMergeRequest> mergeRequests = (List<GitlabMergeRequest>) mergeRequestListWorker.mergeRequests;
         listOfRequests.setModel(mergeRequestModel(mergeRequests));
         listOfRequests.getColumnModel().getColumn(0).setPreferredWidth(200);
         listOfRequests.getColumnModel().getColumn(5).setWidth(0);

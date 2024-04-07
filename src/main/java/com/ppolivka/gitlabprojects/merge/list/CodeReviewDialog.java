@@ -1,5 +1,7 @@
 package com.ppolivka.gitlabprojects.merge.list;
 
+import static com.intellij.openapi.ui.Messages.showErrorDialog;
+
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -17,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.ppolivka.gitlabprojects.util.MessageUtil.showErrorDialog;
 
 /**
  * Dialog to accept merge request
@@ -44,7 +45,7 @@ public class CodeReviewDialog extends DialogWrapper {
     private JLabel assigneeName;
     private JButton assignMe;
 
-    SettingsState settingsState = SettingsState.getInstance();
+    SettingsState settingsState = SettingsState.Companion.getInstance();
 
     private boolean diffClicked = false;
 
@@ -86,15 +87,15 @@ public class CodeReviewDialog extends DialogWrapper {
         });
 
         commentsButton.addActionListener(e -> {
-            GitLabCommentsListWorker commentsListWorker = GitLabCommentsListWorker.create(project, mergeRequest, virtualFile);
+            GitLabCommentsListWorker commentsListWorker = GitLabCommentsListWorker.Companion.create(project, mergeRequest, virtualFile);
             CommentsDialog commentsDialog = new CommentsDialog(project, commentsListWorker, virtualFile);
             commentsDialog.show();
         });
 
         assignMe.addActionListener(event -> {
-            GitLabUtil.computeValueInModal(project, "Changing assignee...", (Convertor<ProgressIndicator, Void>) o -> {
+            GitLabUtil.INSTANCE.computeValueInModal(project, "Changing assignee...", (Convertor<ProgressIndicator, Void>) o -> {
                 try {
-                    SettingsState settingsState = SettingsState.getInstance();
+                    SettingsState settingsState = SettingsState.Companion.getInstance();
                     GitlabUser currentUser = settingsState.api(mergeRequestWorker.getGitRepository()).getCurrentUser();
                     settingsState.api(mergeRequestWorker.getGitRepository()).changeAssignee(
                             mergeRequestWorker.getGitlabProject(),
@@ -119,7 +120,7 @@ public class CodeReviewDialog extends DialogWrapper {
     protected void doOKAction() {
         boolean canContinue = diffClicked;
         if (!diffClicked) {
-            canContinue = GitLabUtil
+            canContinue = GitLabUtil.INSTANCE
                     .showYesNoDialog(project, "Merging Without Review", "You are about to merge this merge request without looking at code differences. Are you sure?");
         }
         if (canContinue) {

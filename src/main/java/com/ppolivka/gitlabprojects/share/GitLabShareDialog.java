@@ -8,10 +8,10 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.ppolivka.gitlabprojects.api.dto.NamespaceDto;
-import com.ppolivka.gitlabprojects.api.dto.ServerDto;
 import com.ppolivka.gitlabprojects.configuration.SettingsState;
 import com.ppolivka.gitlabprojects.dto.GitlabServer;
-import org.apache.commons.lang.StringUtils;
+import com.ppolivka.gitlabprojects.util.MessageUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ppolivka.gitlabprojects.util.MessageUtil.showErrorDialog;
 
 /**
  * Dialog that is displayed when sharing project to git lab
@@ -32,7 +31,7 @@ import static com.ppolivka.gitlabprojects.util.MessageUtil.showErrorDialog;
  */
 public class GitLabShareDialog extends DialogWrapper {
 
-    private static SettingsState settingsState = SettingsState.getInstance();
+    private static SettingsState settingsState = SettingsState.Companion.getInstance();
 
     private JPanel mainView;
     private JRadioButton isPrivate;
@@ -137,7 +136,7 @@ public class GitLabShareDialog extends DialogWrapper {
             public void onSuccess() {
                 super.onSuccess();
                 if(isError) {
-                    showErrorDialog(project, "Groups cannot be refreshed", "Error Loading Groups");
+                    MessageUtil.INSTANCE.showErrorDialog(project, "Groups cannot be refreshed", "Error Loading Groups");
                     close(CLOSE_EXIT_CODE);
                 }
             }

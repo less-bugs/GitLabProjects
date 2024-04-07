@@ -1,17 +1,12 @@
 package com.ppolivka.gitlabprojects.configuration;
 
-import com.intellij.openapi.project.Project;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.ui.EnumComboBoxModel;
 import com.ppolivka.gitlabprojects.dto.GitlabServer;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -19,14 +14,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 public class ServerConfiguration extends DialogWrapper {
 
     private GitlabServer gitlabServer;
-    private SettingsState settingsState = SettingsState.getInstance();
+    private SettingsState settingsState = SettingsState.Companion.getInstance();
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 
@@ -74,15 +76,9 @@ public class ServerConfiguration extends DialogWrapper {
                 } else {
 
                     Future<ValidationInfo> infoFuture = executor.submit(() -> {
-                        try {
-                            settingsState.isApiValid(apiUrl, tokenString);
-                            return null;
-                        } catch (UnknownHostException e) {
-                            return new ValidationInfo(SettingError.SERVER_CANNOT_BE_REACHED.message(), apiURl);
-                        } catch (IOException e) {
-                            return new ValidationInfo(SettingError.INVALID_API_TOKEN.message(), apiURl);
-                        }
-                    });
+						settingsState.isApiValid(apiUrl, tokenString);
+						return null;
+					});
                     try {
                         ValidationInfo info = infoFuture.get(5000, TimeUnit.MILLISECONDS);
                         return info;
@@ -105,7 +101,7 @@ public class ServerConfiguration extends DialogWrapper {
         if(StringUtils.isNotBlank(repositoryUrl.getText())) {
             gitlabServer.setRepositoryUrl(repositoryUrl.getText());
         } else {
-            gitlabServer.setRepositoryUrl(ApiToRepoUrlConverter.convertApiUrlToRepoUrl(apiURl.getText()));
+            gitlabServer.setRepositoryUrl(ApiToRepoUrlConverter.INSTANCE.convertApiUrlToRepoUrl(apiURl.getText()));
         }
         gitlabServer.setPreferredConnection(GitlabServer.CheckoutType.values()[checkoutMethod.getSelectedIndex()]);
         gitlabServer.setRemoveSourceBranch(removeOnMerge.isSelected());
@@ -148,7 +144,7 @@ public class ServerConfiguration extends DialogWrapper {
 
     private void fillFormFromDto() {
         checkoutMethod.setSelectedIndex(gitlabServer.getPreferredConnection().ordinal());
-        removeOnMerge.setSelected(gitlabServer.isRemoveSourceBranch());
+        removeOnMerge.setSelected(gitlabServer.getRemoveSourceBranch());
         apiURl.setText(gitlabServer.getApiUrl());
         repositoryUrl.setText(gitlabServer.getRepositoryUrl());
         token.setText(gitlabServer.getApiToken());
@@ -177,7 +173,7 @@ public class ServerConfiguration extends DialogWrapper {
 
     private void onServerChange() {
         ValidationInfo validationInfo = doValidate();
-        if (validationInfo == null || (!validationInfo.message.equals(SettingError.NOT_A_URL.message))) {
+        if (validationInfo == null || (!validationInfo.message.equals(SettingError.NOT_A_URL.message()))) {
             tokenPage.setEnabled(true);
             tokenPage.setToolTipText("API Key can be find in your profile setting inside GitLab Server: \n" + generateHelpUrl());
         } else {

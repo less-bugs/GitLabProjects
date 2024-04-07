@@ -8,7 +8,7 @@ import com.intellij.ui.SortedComboBoxModel;
 import com.ppolivka.gitlabprojects.component.SearchBoxModel;
 import com.ppolivka.gitlabprojects.configuration.ProjectState;
 import com.ppolivka.gitlabprojects.merge.info.BranchInfo;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.gitlab.api.models.GitlabUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +46,7 @@ public class CreateMergeRequestDialog extends DialogWrapper {
     public CreateMergeRequestDialog(@Nullable Project project, @NotNull GitLabCreateMergeRequestWorker gitLabMergeRequestWorker) {
         super(project);
         this.project = project;
-        projectState = ProjectState.getInstance(project);
+        projectState = ProjectState.Companion.getInstance(project);
         mergeRequestWorker = gitLabMergeRequestWorker;
         init();
 
@@ -58,20 +58,20 @@ public class CreateMergeRequestDialog extends DialogWrapper {
         setTitle("Create Merge Request");
         setVerticalStretch(2f);
 
-        SearchBoxModel searchBoxModel = new SearchBoxModel(assigneeBox, mergeRequestWorker.getSearchableUsers());
+        SearchBoxModel searchBoxModel = new SearchBoxModel(assigneeBox, mergeRequestWorker.searchableUsers);
         assigneeBox.setModel(searchBoxModel);
         assigneeBox.setEditable(true);
         assigneeBox.addItemListener(searchBoxModel);
         assigneeBox.setBounds(140, 170, 180, 20);
 
-        currentBranch.setText(mergeRequestWorker.getGitLocalBranch().getName());
+        currentBranch.setText(mergeRequestWorker.gitLocalBranch.getName());
 
         myBranchModel = new SortedComboBoxModel<>((o1, o2) -> StringUtil.naturalCompare(o1.getName(), o2.getName()));
-        myBranchModel.setAll(mergeRequestWorker.getBranches());
+        myBranchModel.setAll(mergeRequestWorker.branches);
         targetBranch.setModel(myBranchModel);
         targetBranch.setSelectedIndex(0);
-        if (mergeRequestWorker.getLastUsedBranch() != null) {
-            targetBranch.setSelectedItem(mergeRequestWorker.getLastUsedBranch());
+        if (mergeRequestWorker.lastUsedBranch != null) {
+            targetBranch.setSelectedItem(mergeRequestWorker.lastUsedBranch);
         }
         lastSelectedBranch = getSelectedBranch();
 
@@ -79,7 +79,7 @@ public class CreateMergeRequestDialog extends DialogWrapper {
             prepareTitle();
             lastSelectedBranch = getSelectedBranch();
             projectState.setLastMergedBranch(getSelectedBranch().getName());
-            mergeRequestWorker.getDiffViewWorker().launchLoadDiffInfo(mergeRequestWorker.getLocalBranchInfo(), getSelectedBranch());
+            mergeRequestWorker.getDiffViewWorker().launchLoadDiffInfo(mergeRequestWorker.localBranchInfo, getSelectedBranch());
         });
 
         prepareTitle();
@@ -94,7 +94,7 @@ public class CreateMergeRequestDialog extends DialogWrapper {
             this.wip.setSelected(true);
         }
 
-        diffButton.addActionListener(e -> mergeRequestWorker.getDiffViewWorker().showDiffDialog(mergeRequestWorker.getLocalBranchInfo(), getSelectedBranch()));
+        diffButton.addActionListener(e -> mergeRequestWorker.getDiffViewWorker().showDiffDialog(mergeRequestWorker.localBranchInfo, getSelectedBranch()));
     }
 
     @Override
