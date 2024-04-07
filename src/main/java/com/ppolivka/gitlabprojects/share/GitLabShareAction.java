@@ -208,9 +208,9 @@ public class GitLabShareAction extends NoGitLabApiAction {
                                                     @NotNull ProgressIndicator indicator) {
         final GitLineHandler h = new GitLineHandler(project, root, GitCommand.INIT);
         h.setStdoutSuppressed(false);
-        GitHandlerUtil.runInCurrentThread(h, indicator, true, GitBundle.getString("initializing.title"));
-        if (!h.errors().isEmpty()) {
-            GitUIUtil.showOperationErrors(project, h.errors(), "git init");
+        GitCommandResult commandResult = Git.getInstance().runCommand(h);
+        if (!commandResult.success()) {
+            GitUIUtil.showOperationError(project, "git init", commandResult.getOutputAsJoinedString());
             return false;
         }
         GitInit.refreshAndConfigureVcsMappings(project, root, root.getPath());

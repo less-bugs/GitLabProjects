@@ -24,7 +24,7 @@
     ]]>
     </change-notes>
 
-    <idea-version since-build="232" until-build="232.*"/>
+    <idea-version since-build="241" until-build="241.*"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.vcs</depends>
