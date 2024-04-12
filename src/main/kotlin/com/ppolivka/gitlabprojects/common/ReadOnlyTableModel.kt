@@ -8,10 +8,8 @@ import javax.swing.table.DefaultTableModel
  * @author ppolivka
  * @since 22.12.2015
  */
-class ReadOnlyTableModel : DefaultTableModel {
-    constructor()
-
-    constructor(data: Array<Array<Any?>>?, columnNames: Array<Any>?) : super(data, columnNames)
+class ReadOnlyTableModel(data: Array<Array<Any?>>, columnNames: Array<String>) :
+    DefaultTableModel(data, columnNames) {
 
     override fun isCellEditable(row: Int, column: Int): Boolean {
         return false

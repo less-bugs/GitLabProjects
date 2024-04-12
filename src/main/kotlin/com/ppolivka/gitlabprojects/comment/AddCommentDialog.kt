@@ -23,14 +23,14 @@ import javax.swing.JTextArea
  * @since 1.3.2
  */
 class AddCommentDialog(
-    private val project: Project?,
+    private val project: Project,
     private val mergeRequest: GitlabMergeRequest,
     file: VirtualFile?
 ) : DialogWrapper(
     project
 ) {
-    private var panel: JPanel? = null
-    private var commentText: JTextArea? = null
+    private lateinit var panel: JPanel
+    private lateinit var commentText: JTextArea
 
     private var file: VirtualFile? = null
 
@@ -47,10 +47,10 @@ class AddCommentDialog(
     override fun doOKAction() {
         super.doOKAction()
         GitLabUtil.computeValueInModal(
-            project!!,
+            project,
             "Adding comment...",
             Convertor<ProgressIndicator?, Void?> { indicator: ProgressIndicator? ->
-                val comment = commentText!!.text
+                val comment = commentText.text
                 if (StringUtils.isNotBlank(comment)) {
                     try {
                         SettingsState.instance.api(project, file).addComment(mergeRequest, comment)
@@ -67,7 +67,7 @@ class AddCommentDialog(
     }
 
     override fun doValidate(): ValidationInfo? {
-        if (StringUtils.isBlank(commentText!!.text)) {
+        if (StringUtils.isBlank(commentText.text)) {
             return ValidationInfo("Comment text cannot be empty.", commentText)
         }
         return super.doValidate()

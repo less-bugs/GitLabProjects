@@ -36,9 +36,7 @@ class GitLabMergeRequestListWorker : GitLabMergeRequestWorker {
     override var remoteProjectName: String? = null
     override var diffViewWorker: GitLabDiffViewWorker? = null
 
-    //endregion
-    @JvmField
-    var mergeRequests: List<GitlabMergeRequest>? = null
+    private lateinit var mergeRequests: List<GitlabMergeRequest>
 
     fun mergeBranches(project: Project, mergeRequest: GitlabMergeRequest) {
         object : Task.Backgroundable(project, "Merging Branches...") {
@@ -46,8 +44,9 @@ class GitLabMergeRequestListWorker : GitLabMergeRequestWorker {
                 try {
                     SettingsState.instance.api(gitRepository!!)
                         .acceptMergeRequest(gitlabProject, mergeRequest)
-                    VcsNotifier.getInstance(project!!)
+                    VcsNotifier.getInstance(project)
                         .notifyImportantInfo(
+                            MessageUtil.DISPLAY_ID,
                             "Merged",
                             "Merge request is merged.",
                             NotificationListener.URL_OPENING_LISTENER
@@ -65,7 +64,7 @@ class GitLabMergeRequestListWorker : GitLabMergeRequestWorker {
 
     companion object {
 
-        fun create(project: Project, file: VirtualFile?): GitLabMergeRequestListWorker ?{
+        fun create(project: Project, file: VirtualFile?): GitLabMergeRequestListWorker? {
             return GitLabUtil.computeValueInModal(project, "Loading data...", Convertor {
                 val mergeRequestListWorker = GitLabMergeRequestListWorker()
                 try {

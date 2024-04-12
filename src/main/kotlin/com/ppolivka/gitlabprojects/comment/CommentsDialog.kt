@@ -19,7 +19,7 @@ import javax.swing.table.TableModel
  * @since 1.3.2
  */
 class CommentsDialog(
-    private val project: Project?,
+    private val project: Project,
     private var worker: GitLabCommentsListWorker,
     private val file: VirtualFile
 ) : DialogWrapper(
@@ -53,7 +53,7 @@ class CommentsDialog(
 
         addCommentButton.addActionListener {
             AddCommentDialog(project, worker.mergeRequest, file).show()
-            this.worker = GitLabCommentsListWorker.create(project!!, worker.mergeRequest, file)
+            this.worker = GitLabCommentsListWorker.create(project, worker.mergeRequest, file)
             reloadModel()
             comments.repaint()
         }
@@ -67,24 +67,20 @@ class CommentsDialog(
         comments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
     }
 
-    override fun createCenterPanel(): JComponent? {
+    override fun createCenterPanel(): JComponent {
         return panel
     }
 
     private fun commentsModel(notes: List<GitlabNote>?): TableModel {
-        val columnNames = arrayOf<Any>("Author", "Date", "Text")
-        val data = Array(
-            notes!!.size
-        ) { arrayOfNulls<Any>(columnNames.size) }
-        var i = 0
+        val columnNames = arrayOf("Author", "Date", "Text")
+        val data = Array(notes!!.size) { arrayOfNulls<Any>(columnNames.size) }
         notes.sortedWith(Comparator { o1: GitlabNote, o2: GitlabNote -> o2.createdAt.compareTo(o1.createdAt) })
-        for (mergeRequest in notes) {
+        for ((i, mergeRequest) in notes.withIndex()) {
             val row = arrayOfNulls<Any>(columnNames.size)
-            row[0] = mergeRequest!!.author.name
+            row[0] = mergeRequest.author.name
             row[1] = mergeRequest.createdAt
             row[2] = mergeRequest.body
             data[i] = row
-            i++
         }
         return ReadOnlyTableModel(data, columnNames)
     }

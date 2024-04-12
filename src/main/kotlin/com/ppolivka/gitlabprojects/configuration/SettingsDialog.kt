@@ -11,7 +11,7 @@ import javax.swing.JComponent
  * @author ppolivka
  * @since 17.11.2015
  */
-class SettingsDialog(project: Project?) : DialogWrapper(project) {
+class SettingsDialog(project: Project) : DialogWrapper(project) {
     private val settingsView = SettingsView()
 
     init {
@@ -24,7 +24,7 @@ class SettingsDialog(project: Project?) : DialogWrapper(project) {
         settingsView.setup()
     }
 
-    override fun createCenterPanel(): JComponent? {
+    override fun createCenterPanel(): JComponent {
         return settingsView.createComponent()
     }
 

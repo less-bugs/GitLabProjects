@@ -16,10 +16,8 @@ class GitLabMergeRequestListAction : GitLabApiAction(
     "List of all merge requests for this project",
     AllIcons.Vcs.Merge
 ) {
-    override fun apiValidAction(anActionEvent: AnActionEvent?) {
+    override fun apiValidAction(anActionEvent: AnActionEvent) {
         val mergeRequestListWorker = GitLabMergeRequestListWorker.create(project, file)
-        val gitLabMergeRequestListDialog =
-            GitLabMergeRequestListDialog(project, mergeRequestListWorker!!, file)
-        DialogManager.show(gitLabMergeRequestListDialog)
+        DialogManager.show(GitLabMergeRequestListDialog(project, mergeRequestListWorker!!))
     }
 }

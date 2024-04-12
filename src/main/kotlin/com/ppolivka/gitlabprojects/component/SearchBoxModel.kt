@@ -38,7 +38,7 @@ class SearchBoxModel(private val comboBox: JComboBox<*>, searchableUsers: Search
     init {
         comboBoxEditor.editorComponent.addKeyListener(this)
         this.searchableUsers = searchableUsers
-        data.addAll(searchableUsers.initialModel!!)
+        data.addAll(searchableUsers.initialModel)
         timer = Timer()
     }
 
@@ -49,16 +49,16 @@ class SearchBoxModel(private val comboBox: JComboBox<*>, searchableUsers: Search
                     if ((System.currentTimeMillis() - lastKeyPressTime) > 200) {
                         if (`in` != null && "" != `in` && `in` != lastQuery) {
                             data.clear()
-                            data = Arrays.asList(EmptyUser(`in`), EmptyUser("loading..."))
+                            data = mutableListOf(EmptyUser(`in`), EmptyUser("loading..."))
                             dataChanged()
                             data = ArrayList()
                             data.add(EmptyUser(`in`))
-                            data.addAll(searchableUsers.search(`in`)!!)
+                            data.addAll(searchableUsers.search(`in`))
                             lastQuery = `in`
                             dataChanged()
                         } else if (`in` == null || "" == `in`) {
                             data.clear()
-                            data.addAll(searchableUsers.initialModel!!)
+                            data.addAll(searchableUsers.initialModel)
                             dataChanged()
                         }
                     }
@@ -71,7 +71,7 @@ class SearchBoxModel(private val comboBox: JComboBox<*>, searchableUsers: Search
         super.fireContentsChanged(this, 0, data.size)
         comboBox.hidePopup()
         comboBox.showPopup()
-        if (!data.isEmpty()) {
+        if (data.isNotEmpty()) {
             comboBox.selectedIndex = 0
         }
     }

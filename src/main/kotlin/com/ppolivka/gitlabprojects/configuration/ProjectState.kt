@@ -9,9 +9,10 @@ import com.intellij.openapi.project.Project
  * @author ppolivka
  * @since 30.10.2015
  */
+@Service(Service.Level.PROJECT)
 @State(
     name = "GitlabProjectsProjectSettings",
-    storages = [Storage(file = StoragePathMacros.WORKSPACE_FILE)]
+    storages = [Storage(StoragePathMacros.WORKSPACE_FILE)]
 )
 class ProjectState : PersistentStateComponent<ProjectState.State?> {
     private var projectState: State? = State()
@@ -66,7 +67,7 @@ class ProjectState : PersistentStateComponent<ProjectState.State?> {
 
     companion object {
         fun getInstance(project: Project): ProjectState {
-            return ServiceManager.getService(project, ProjectState::class.java)
+            return project.getService(ProjectState::class.java)
         }
     }
 }

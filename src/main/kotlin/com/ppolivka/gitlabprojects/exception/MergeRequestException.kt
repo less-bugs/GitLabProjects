@@ -6,19 +6,8 @@ package com.ppolivka.gitlabprojects.exception
  * @author ppolivka
  * @since 31.10.2015
  */
-class MergeRequestException : Throwable {
-    constructor()
+class MergeRequestException : GitLabException {
+    constructor() : super("", null)
 
-    constructor(message: String?) : super(message)
-
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-
-    constructor(cause: Throwable?) : super(cause)
-
-    constructor(
-        message: String?,
-        cause: Throwable?,
-        enableSuppression: Boolean,
-        writableStackTrace: Boolean
-    ) : super(message, cause, enableSuppression, writableStackTrace)
+    constructor(cause: Throwable?) : super("MergeRequest", cause)
 }

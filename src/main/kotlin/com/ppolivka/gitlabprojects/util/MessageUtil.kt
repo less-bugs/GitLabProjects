@@ -10,7 +10,7 @@ import com.intellij.openapi.vcs.VcsNotifier
  * @since 5.11.2015
  */
 object MessageUtil {
-    private const val DISPLAY_ID = "gitlabprojects.msg"
+      const val DISPLAY_ID = "gitlabprojects.msg"
 
     fun showErrorDialog(project: Project, message: String?, title: String?) {
         VcsNotifier.getInstance(project).notifyError(DISPLAY_ID, title!!, message!!)
@@ -22,5 +22,9 @@ object MessageUtil {
 
     fun showInfoMessage(project: Project, message: String?, title: String?) {
         VcsNotifier.getInstance(project).notifyInfo(DISPLAY_ID, title!!, message!!)
+    }
+
+    fun showImportantInfo(project: Project, message: String?, title: String?) {
+        VcsNotifier.getInstance(project).notifyImportantInfo(DISPLAY_ID, title!!, message!!)
     }
 }

@@ -1,7 +1,7 @@
 package com.ppolivka.gitlabprojects.share
 
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -19,7 +19,6 @@ import com.ppolivka.gitlabprojects.dto.GitlabServer
 import com.ppolivka.gitlabprojects.util.GitLabUtil
 import com.ppolivka.gitlabprojects.util.MessageUtil
 import git4idea.GitUtil
-import git4idea.actions.BasicAction
 import git4idea.actions.GitInit
 import git4idea.commands.Git
 import git4idea.commands.GitCommand
@@ -50,8 +49,8 @@ class GitLabShareAction : NoGitLabApiAction(
         shareProjectOnGitLab(project, file)
     }
 
-    fun shareProjectOnGitLab(project: Project, file: VirtualFile?) {
-        BasicAction.saveAll()
+    private fun shareProjectOnGitLab(project: Project, file: VirtualFile?) {
+        FileDocumentManager.getInstance().saveAllDocuments()
 
         // get gitRepository
         val gitRepository = GitLabUtil.getGitRepository(project, file)
@@ -109,7 +108,7 @@ class GitLabShareAction : NoGitLabApiAction(
 
                     if (!gitDetected) {
                         indicator.text = "Creating empty git repo..."
-                        if (!createEmptyGitRepository(project, root, indicator)) {
+                        if (!createEmptyGitRepository(project, root)) {
                             return
                         }
                     }
@@ -145,7 +144,7 @@ class GitLabShareAction : NoGitLabApiAction(
                     }
 
                     indicator.text = "Pushing to gitlab master..."
-                    if (!pushCurrentBranch(project, repository, name, remoteUrl, name, remoteUrl)) {
+                    if (!pushCurrentBranch(project, repository, name, remoteUrl)) {
                         return
                     }
 
@@ -219,8 +218,7 @@ class GitLabShareAction : NoGitLabApiAction(
 
         private fun createEmptyGitRepository(
             project: Project,
-            root: VirtualFile,
-            indicator: ProgressIndicator
+            root: VirtualFile
         ): Boolean {
             val h = GitLineHandler(project, root, GitCommand.INIT)
             h.setStdoutSuppressed(false)
@@ -241,13 +239,9 @@ class GitLabShareAction : NoGitLabApiAction(
             project: Project,
             repository: GitRepository,
             remoteName: String,
-            remoteUrl: String,
-            name: String,
-            url: String
+            remoteUrl: String
         ): Boolean {
-            val git = ServiceManager.getService(
-                Git::class.java
-            )
+            val git = Git.getInstance()
 
             val currentBranch = repository.currentBranch
             if (currentBranch == null) {

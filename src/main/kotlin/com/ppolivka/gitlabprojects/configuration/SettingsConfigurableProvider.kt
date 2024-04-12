@@ -10,7 +10,7 @@ import com.intellij.openapi.options.ConfigurableProvider
  * @since 9.10.2015
  */
 class SettingsConfigurableProvider : ConfigurableProvider() {
-    override fun createConfigurable(): Configurable? {
+    override fun createConfigurable(): Configurable {
         val settingsView = SettingsView()
         settingsView.setup()
         return settingsView

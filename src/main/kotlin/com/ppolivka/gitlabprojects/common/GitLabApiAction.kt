@@ -19,23 +19,18 @@ import javax.swing.Icon
  * @author ppolivka
  * @since 22.12.2015
  */
-abstract class GitLabApiAction : DumbAwareAction {
+abstract class GitLabApiAction(text: String?, description: String?, icon: Icon?) :
+    DumbAwareAction(text, description, icon) {
+
     protected lateinit var project: Project
     protected var file: VirtualFile? = null
 
-    constructor()
-
-    constructor(text: String?) : super(text)
-
-    constructor(text: String?, description: String?, icon: Icon?) : super(text, description, icon)
-
     override fun actionPerformed(anActionEvent: AnActionEvent) {
-        project = anActionEvent.getData(CommonDataKeys.PROJECT)?:return
-        file = anActionEvent.getData(CommonDataKeys.VIRTUAL_FILE)
-
+        project = anActionEvent.getData(CommonDataKeys.PROJECT) ?: return
         if (project.isDisposed) {
             return
         }
+        file = anActionEvent.getData(CommonDataKeys.VIRTUAL_FILE)
 
         if (!validateGitLabApi(project, file)) {
             return
@@ -50,7 +45,7 @@ abstract class GitLabApiAction : DumbAwareAction {
      *
      * @param anActionEvent event information
      */
-    abstract fun apiValidAction(anActionEvent: AnActionEvent?)
+    abstract fun apiValidAction(anActionEvent: AnActionEvent)
 
     companion object {
 

@@ -16,20 +16,20 @@ import javax.swing.JTextArea
  */
 class CommentDetail(project: Project?, name: String, date: Date, body: String) :
     DialogWrapper(project) {
-    private var panel: JPanel? = null
-    private var authorName: JLabel? = null
-    private var dateText: JLabel? = null
-    private var bodyText: JTextArea? = null
+    private lateinit var panel: JPanel
+    private lateinit var authorName: JLabel
+    private lateinit var dateText: JLabel
+    private lateinit var bodyText: JTextArea
 
     init {
         init()
         title = "Comment Detail"
-        authorName!!.text = name
-        dateText!!.text = date.toString()
-        bodyText!!.text = body
+        authorName.text = name
+        dateText.text = date.toString()
+        bodyText.text = body
     }
 
-    override fun createCenterPanel(): JComponent? {
+    override fun createCenterPanel(): JComponent {
         return panel
     }
 }

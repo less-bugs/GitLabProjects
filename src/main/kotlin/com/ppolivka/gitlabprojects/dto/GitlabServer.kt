@@ -1,9 +1,5 @@
 package com.ppolivka.gitlabprojects.dto
 
-import lombok.Data
-
-
-@Data
 class GitlabServer {
     var apiUrl = ""
     var apiToken = ""
@@ -18,5 +14,9 @@ class GitlabServer {
     enum class CheckoutType {
         SSH,
         HTTPS
+    }
+
+    companion object{
+        val EMPTY = GitlabServer()
     }
 }
