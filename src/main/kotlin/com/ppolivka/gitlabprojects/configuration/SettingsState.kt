@@ -1,7 +1,7 @@
 package com.ppolivka.gitlabprojects.configuration
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
@@ -35,7 +35,7 @@ class SettingsState : PersistentStateComponent<SettingsState?> {
 
     var gitlabServers: MutableList<GitlabServer> = mutableListOf()
 
-    override fun getState(): SettingsState? {
+    override fun getState(): SettingsState {
         return this
     }
 
@@ -147,8 +147,6 @@ class SettingsState : PersistentStateComponent<SettingsState?> {
 
     companion object {
         val instance: SettingsState
-            get() = ServiceManager.getService(
-                SettingsState::class.java
-            )
+            get() = ApplicationManager.getApplication().getService(SettingsState::class.java)
     }
 }

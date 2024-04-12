@@ -37,7 +37,7 @@ class GitLabMergeRequestListDialog(
         setOKButtonText("Code Review")
         horizontalStretch = 2f
 
-        listOfRequests.model = mergeRequestModel(mergeRequestListWorker.mergeRequests!!)
+        listOfRequests.model = mergeRequestModel(mergeRequestListWorker.mergeRequests)
         listOfRequests.columnModel.getColumn(0).preferredWidth = 200
         listOfRequests.columnModel.getColumn(5).width = 0
         listOfRequests.columnModel.getColumn(5).minWidth = 0

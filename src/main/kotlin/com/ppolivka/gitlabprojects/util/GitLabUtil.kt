@@ -5,6 +5,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.Ref
@@ -15,8 +16,9 @@ import com.intellij.util.ThrowableConvertor
 import com.intellij.util.containers.Convertor
 import com.ppolivka.gitlabprojects.configuration.SettingsState
 import git4idea.GitUtil
+import git4idea.commands.Git
 import git4idea.commands.GitCommand
-import git4idea.commands.GitSimpleHandler
+import git4idea.commands.GitLineHandler
 import git4idea.config.GitExecutableManager
 import git4idea.config.GitVersion
 import git4idea.repo.GitRemote
@@ -40,7 +42,7 @@ object GitLabUtil {
     fun getGitRepository(project: Project, file: VirtualFile?): GitRepository? {
         val manager = GitUtil.getRepositoryManager(project)
         val repositories = manager.repositories
-        if (repositories.size == 0) {
+        if (repositories.isEmpty()) {
             return null
         }
         if (repositories.size == 1) {
@@ -52,7 +54,7 @@ object GitLabUtil {
                 return repository
             }
         }
-        return manager.getRepositoryForFile(project.baseDir)
+        return manager.getRepositoryForFile(project.guessProjectDir())
     }
 
     fun findGitLabRemoteUrl(repository: GitRepository): String? {
@@ -75,13 +77,13 @@ object GitLabUtil {
     }
 
 
-    fun isGitLabUrl(testUrl: String?, url: String?): Boolean {
+    fun isGitLabUrl(testUrl: String, url: String): Boolean {
         try {
             val fromSettings = URI(testUrl)
             val fromSettingsHost = fromSettings.host
 
             val patternString =
-                "(\\w+://)(.+@)*([\\w\\d\\.\\-]+)(:[\\d]+){0,1}/*(.*)|(.+@)*([\\w\\d\\.\\-]+):(.*)"
+                "(\\w+://)(.+@)*([\\w.\\-]+)(:[\\d]+){0,1}/*(.*)|(.+@)*([\\w.\\-]+):(.*)"
             val pattern = Pattern.compile(patternString)
             val matcher = pattern.matcher(url)
             var fromUrlHost = ""
@@ -102,11 +104,8 @@ object GitLabUtil {
         }
     }
 
-    fun removeNotAlpha(input: String): String {
-        var input = input
-        input = input.replace("[^a-zA-Z0-9]".toRegex(), "")
-        input = input.lowercase(Locale.getDefault())
-        return input
+    private fun removeNotAlpha(input: String): String {
+        return input.replace("[^a-zA-Z0-9]".toRegex(), "").lowercase(Locale.getDefault())
     }
 
     fun addGitLabRemote(
@@ -115,13 +114,11 @@ object GitLabUtil {
         remote: String,
         url: String
     ): Boolean {
-        val handler = GitSimpleHandler(project, repository.root, GitCommand.REMOTE)
-        handler.setSilent(true)
-
+        val handler = GitLineHandler(project, repository.root, GitCommand.REMOTE)
         try {
             handler.addParameters("add", remote, url)
-            handler.run()
-            if (handler.exitCode != 0) {
+            val commandResult = Git.getInstance().runCommand(handler)
+            if (!commandResult.success()) {
                 MessageUtil.showErrorDialog(
                     project,
                     "New remote origin cannot be added to this project.",
@@ -164,7 +161,6 @@ object GitLabUtil {
         return true
     }
 
-    @Throws(IOException::class)
     fun <T> computeValueInModal(
         project: Project,
         caption: String,
@@ -235,7 +231,6 @@ object GitLabUtil {
         return dataRef.get()
     }
 
-    @Throws(IOException::class)
     fun <T> runInterruptable(
         indicator: ProgressIndicator,
         task: ThrowableComputable<T, IOException?>

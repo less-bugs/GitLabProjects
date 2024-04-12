@@ -1,6 +1,5 @@
 plugins {
     id("org.jetbrains.intellij") version "1.17.3"
-    id("io.franzbecker.gradle-lombok") version "5.0.0"
     id("org.jetbrains.kotlin.jvm") version "1.9.23"
 }
 
@@ -10,12 +9,8 @@ intellij {
     pluginName.set("GitLabProjects")
 }
 
-lombok {
-    version = "1.18.22"
-    sha256 = ""
-}
-
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -24,8 +19,14 @@ java {
 }
 
 dependencies {
-    implementation("commons-io:commons-io:2.7")
+
     implementation("org.gitlab:java-gitlab-api:4.0.0")
+
+    constraints {
+        implementation("commons-io:commons-io:2.7")
+        implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
+    }
+
 }
 
 tasks {

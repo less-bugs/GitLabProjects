@@ -36,7 +36,7 @@ class GitLabMergeRequestListWorker : GitLabMergeRequestWorker {
     override var remoteProjectName: String? = null
     override var diffViewWorker: GitLabDiffViewWorker? = null
 
-    private lateinit var mergeRequests: List<GitlabMergeRequest>
+    lateinit var mergeRequests: List<GitlabMergeRequest>
 
     fun mergeBranches(project: Project, mergeRequest: GitlabMergeRequest) {
         object : Task.Backgroundable(project, "Merging Branches...") {
